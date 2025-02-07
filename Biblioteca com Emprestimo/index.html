@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biblioteca</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Biblioteca</h1>
+    <button onclick="adicionarLivro()">Adicionar Livro</button>
+    <button onclick="listarDisponiveis()">Listar Livros Disponíveis</button>
+    <button onclick="listarEmprestados()">Listar Títulos Emprestados</button>
+    <button onclick="totalEmprestimos()">Total de Empréstimos</button>
+    
+    <div id="output"></div>
+    
+    <script>
+        let biblioteca = [];
+
+        function adicionarLivro() {
+            let titulo = prompt("Digite o título do livro:");
+            let autor = prompt("Digite o autor do livro:");
+            biblioteca.push({ titulo, autor, disponivel: true, emprestimos: 0 });
+            exibirLivros();
+        }
+
+        function listarDisponiveis() {
+            let disponiveis = biblioteca.filter(livro => livro.disponivel);
+            document.getElementById("output").innerText = JSON.stringify(disponiveis, null, 2);
+        }
+
+        function listarEmprestados() {
+            let emprestados = biblioteca.filter(livro => !livro.disponivel).map(livro => livro.titulo);
+            document.getElementById("output").innerText = JSON.stringify(emprestados, null, 2);
+        }
+
+        function totalEmprestimos() {
+            let total = biblioteca.reduce((acc, livro) => acc + livro.emprestimos, 0);
+            document.getElementById("output").innerText = `Total de Empréstimos: ${total}`;
+        }
+
+        function exibirLivros() {
+            document.getElementById("output").innerText = JSON.stringify(biblioteca, null, 2);
+        }
+    </script>
+</body>
+</html>

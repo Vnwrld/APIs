@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Clima com Funções Assíncronas</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Consulta de Clima</h1>
+        <input type="text" id="city" placeholder="Digite o nome da cidade">
+        <button onclick="getWeather()">Buscar</button>
+        <div id="weather-info"></div>
+    </div>
+    <script>
+        async function getWeather() {
+            const apiKey = 'SUA_CHAVE_API';
+            const city = document.getElementById('city').value;
+            const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&lang=pt_br&appid=${apiKey}`;
+            
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                if (response.ok) {
+                    const { temp, humidity } = data.main;
+                    const weatherCondition = data.weather[0].description;
+                    
+                    const extremeWeather = [{ temp, humidity, weatherCondition }]
+                        .filter(w => w.temp > 35 || w.temp < 5);
+                    
+                    if (extremeWeather.length > 0) {
+                        document.getElementById('weather-info').innerHTML = `
+                            <p>Temperatura: ${temp}°C</p>
+                            <p>Umidade: ${humidity}%</p>
+                            <p>Condição: ${weatherCondition}</p>
+                            <p style="color: red;"><strong>Condição Climática Extrema!</strong></p>`;
+                    } else {
+                        document.getElementById('weather-info').innerHTML = `
+                            <p>O clima está normal em ${city}.</p>`;
+                    }
+                } else {
+                    document.getElementById('weather-info').innerHTML = '<p>Cidade não encontrada.</p>';
+                }
+            } catch (error) {
+                document.getElementById('weather-info').innerHTML = '<p>Erro ao buscar os dados.</p>';
+            }
+        }
+    </script>
+</body>
+</html>

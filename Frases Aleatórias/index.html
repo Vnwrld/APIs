@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Frases Aleatórias</title>
+</head>
+<body>
+    <h1>Frases Aleatórias</h1>
+    <div id="quotes"></div>
+    
+    <script>
+        async function fetchQuotes() {
+            try {
+                const quotesContainer = document.getElementById('quotes');
+                quotesContainer.innerHTML = '';
+                
+                const requests = Array.from({ length: 5 }, () => fetch('https://api.quotable.io/random').then(res => {
+                    if (!res.ok) {
+                        throw new Error(`HTTP error! Status: ${res.status}`);
+                    }
+                    return res.json();
+                }));
+                
+                const quotes = await Promise.all(requests);
+                
+                quotes.forEach(quote => {
+                    const quoteElement = document.createElement('div');
+                    quoteElement.classList.add('quote-container');
+                    quoteElement.innerHTML = `<p>"${quote.content}"</p><p class="author">- ${quote.author}</p>`;
+                    quotesContainer.appendChild(quoteElement);
+                });
+            } catch (error) {
+                console.error("Erro ao buscar frases:", error);
+                document.getElementById('quotes').innerHTML = '<p>Falha ao carregar frases. Tente novamente mais tarde.</p>';
+            }
+        }
+
+        fetchQuotes();
+    </script>
+</body>
+</html>

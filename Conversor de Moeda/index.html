@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversor de Moeda</title>
+</head>
+    <body>
+        <h1>Conversor de Moeda</h1>
+        <input type="number" id="valor" placeholder="Valor" />
+        <select id="moedaInicial">
+            <option value="USD">USD</option>
+            <option value="EUR">EUR</option>
+            <option value="BRL">BRL</option>
+        </select>
+        <button onclick="converterMoeda()">Converter</button>
+        <h2>Resultados:</h2>
+        <div id="resultado"></div>
+        
+        <script>
+            async function converterMoeda() {
+                const valor = document.getElementById('valor').value;
+                const moedaInicial = document.getElementById('moedaInicial').value;
+                const resultadoDiv = document.getElementById('resultado');
+                
+                if (!valor) {
+                    alert("Por favor, insira um valor para conversão.");
+                    return;
+                }
+                
+                try {
+                    const response = await fetch(`https://api.exchangerate-api.com/v4/latest/${moedaInicial}`);
+                    const data = await response.json();
+                    
+                    const taxas = {
+                        USD: data.rates.USD,
+                        EUR: data.rates.EUR,
+                        BRL: data.rates.BRL
+                    };
+                    
+                    resultadoDiv.innerHTML = Object.keys(taxas).map(moeda => {
+                        const convertido = (valor * taxas[moeda]).toFixed(2);
+                        return `<p>${valor} ${moedaInicial} = ${convertido} ${moeda}</p>`;
+                    }).join('');
+                    
+                } catch (error) {
+                    resultadoDiv.innerHTML = "Erro ao obter taxas de câmbio.";
+                    console.error("Erro na conversão de moeda:", error);
+                }
+            }
+        </script>
+    </body>
+    </html>
